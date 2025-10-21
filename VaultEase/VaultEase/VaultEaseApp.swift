@@ -10,20 +10,26 @@ import FirebaseCore
 
 @main
 struct VaultEaseApp: App {
-    @StateObject private var authViewModel = AuthViewModel()
-    // Inicializar Firebase cuando arranca la app
+    @StateObject private var vm = AuthViewModel()
+    
     init() {
         FirebaseApp.configure()
+        print("✅ Firebase inicializado correctamente")
+        if let clientID = FirebaseApp.app()?.options.clientID {
+            print("CLIENT_ID encontrado: \(clientID)")
+        } else {
+            print("⚠️ CLIENT_ID no encontrado")
+        }
     }
-
+    
     var body: some Scene {
-           WindowGroup {
-               if let _ = authViewModel.user {
-                   HomeView(vm: authViewModel)
-               } else {
-                   LoginView()
-                       .environmentObject(authViewModel)
-               }
-           }
-       }
+        WindowGroup {
+            if vm.user != nil {
+                HomeView()
+            } else {
+                LoginView()
+            }
+        }
+    }
 }
+

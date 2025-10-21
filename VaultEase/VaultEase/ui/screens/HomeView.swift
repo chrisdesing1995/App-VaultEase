@@ -9,32 +9,28 @@ import SwiftUI
 import FirebaseAuth
 
 struct HomeView: View {
-    @ObservedObject var vm: AuthViewModel
+    @StateObject private var vm = AuthViewModel()
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 24) {
-                Text("🏠 Bienvenido a VaultEase")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-
-                if let email = vm.user?.email {
-                    Text("Has iniciado sesión como:")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Text(email)
-                        .font(.headline)
-                        .foregroundColor(.blue)
-                }
-
+        NavigationStack {
+            VStack(spacing: 20) {
+                Text("👋 Bienvenido, \(vm.user?.email ?? "Usuario")")
+                    .font(.title2)
+                    .padding(.top, 50)
+                
                 Button("Cerrar sesión") {
                     vm.signOut()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.red)
+                .font(.system(size: 17, weight: .medium))
+                .foregroundColor(.red)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+                
+                Spacer()
             }
-            .padding()
             .navigationTitle("Inicio")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
