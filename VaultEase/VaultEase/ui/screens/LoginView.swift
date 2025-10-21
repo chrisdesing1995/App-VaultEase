@@ -10,7 +10,7 @@ import FirebaseAuth
 import GoogleSignIn
 
 struct LoginView: View {
-    @StateObject private var vm = AuthViewModel()
+    @EnvironmentObject var vm: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @State private var navigateToRegister = false

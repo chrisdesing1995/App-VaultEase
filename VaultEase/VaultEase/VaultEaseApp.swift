@@ -14,22 +14,17 @@ struct VaultEaseApp: App {
     
     init() {
         FirebaseApp.configure()
-        print("✅ Firebase inicializado correctamente")
-        if let clientID = FirebaseApp.app()?.options.clientID {
-            print("CLIENT_ID encontrado: \(clientID)")
-        } else {
-            print("⚠️ CLIENT_ID no encontrado")
-        }
     }
     
     var body: some Scene {
         WindowGroup {
             if vm.user != nil {
                 HomeView()
+                    .environmentObject(vm)
             } else {
                 LoginView()
+                    .environmentObject(vm)
             }
         }
     }
 }
-

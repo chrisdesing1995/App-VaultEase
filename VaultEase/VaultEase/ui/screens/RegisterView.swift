@@ -10,7 +10,7 @@ import SwiftUI
 import FirebaseAuth
 
 struct RegisterView: View {
-    @StateObject private var vm = AuthViewModel()
+    @EnvironmentObject var vm: AuthViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var name = ""
@@ -100,8 +100,11 @@ struct RegisterView: View {
                 // Google Button
                 Button(action: {
                     Task {
-                        await vm.signInWithGoogle()
+                        await vm.signUpWithGoogle()
                         if vm.user != nil {
+                            if Auth.auth().currentUser?.metadata.creationDate == Auth.auth().currentUser?.metadata.lastSignInDate {
+                                print("🆕 Registro completado")
+                            }
                             navigateToHome = true
                         }
                     }
@@ -109,7 +112,7 @@ struct RegisterView: View {
                     HStack {
                         Image(systemName: "globe")
                             .font(.system(size: 18))
-                        Text("Registrarme con Google")
+                        Text("Registrarse con Google")
                             .font(.system(size: 16, weight: .medium))
                     }
                     .frame(maxWidth: .infinity)

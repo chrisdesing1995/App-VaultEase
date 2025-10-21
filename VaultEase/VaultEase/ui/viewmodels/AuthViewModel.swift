@@ -67,26 +67,33 @@ final class AuthViewModel: ObservableObject {
             errorMessage = mapFirebaseError(error)
         }
     }
+    
+    // MARK: - Inicio de sesión o registro con Google
+    func signUpWithGoogle() async {
+        await signInWithGoogle()
+    }
 
     
-    // MARK: - Inicio de sesión con Google
     func signInWithGoogle() async {
         guard let clientID = FirebaseApp.app()?.options.clientID else {
-            errorMessage = "Client ID missing en configuración Firebase"
+            errorMessage = "Client ID faltante en configuración Firebase"
             return
         }
-        
+
         do {
+            // Obtener la vista raíz actual
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let rootVC = windowScene.windows.first?.rootViewController else {
                 errorMessage = "No se encontró la vista raíz para Google Sign-In"
                 return
             }
-            
+
+            // Configuración de Google Sign-In
             let config = GIDConfiguration(clientID: clientID)
             GIDSignIn.sharedInstance.configuration = config
-            
-            let result = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<GIDSignInResult, Error>) in
+
+            // Presentar el flujo de Google Sign-In
+            let result: GIDSignInResult = try await withCheckedThrowingContinuation { continuation in
                 GIDSignIn.sharedInstance.signIn(withPresenting: rootVC) { signInResult, error in
                     if let error = error {
                         continuation.resume(throwing: error)
@@ -95,24 +102,29 @@ final class AuthViewModel: ObservableObject {
                     }
                 }
             }
-            
+
+            // Obtener credenciales
             guard let idToken = result.user.idToken?.tokenString else {
                 errorMessage = "Error obteniendo token de Google"
                 return
             }
-            
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                           accessToken: result.user.accessToken.tokenString)
-            
+
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: result.user.accessToken.tokenString
+            )
+
+            // Iniciar sesión (o registrar si es nuevo)
             let authResult = try await Auth.auth().signIn(with: credential)
             self.user = authResult.user
-            print("✅ Sesión iniciada con Google: \(authResult.user.email ?? "")")
-            
+
+            print("✅ Sesión iniciada o usuario registrado con Google: \(authResult.user.email ?? "")")
+
         } catch {
             errorMessage = mapFirebaseError(error)
         }
     }
-    
+
     // MARK: - Manejo de errores de Firebase
     private func mapFirebaseError(_ error: Error) -> String {
         let nsError = error as NSError
