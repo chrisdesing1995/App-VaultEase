@@ -11,12 +11,12 @@ import FirebaseAuth
 
 struct RegisterView: View {
     @EnvironmentObject var vm: AuthViewModel
-    @Environment(\.dismiss) var dismiss
     
     @State private var name = ""
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
+    @State private var navigateToLogin = false
     @State private var navigateToHome = false
 
     var body: some View {
@@ -24,7 +24,7 @@ struct RegisterView: View {
             
             // MARK: - Header con botón atrás
             HStack {
-                Button(action: { dismiss() }) {
+                Button(action: { navigateToLogin = true }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.black)
@@ -68,6 +68,8 @@ struct RegisterView: View {
                         await vm.signUp(email: email, password: password)
                         if vm.user != nil {
                             navigateToHome = true
+                        }else{
+                            navigateToHome = false
                         }
                     }
                 }) {
@@ -132,19 +134,17 @@ struct RegisterView: View {
             HStack(spacing: 4) {
                 Text("¿Ya tienes una cuenta?")
                 Button("Inicia sesión") {
-                    dismiss()
+                    navigateToLogin = true
                 }
                 .foregroundColor(.blue)
             }
             .font(.system(size: 15))
             .padding(.bottom, 20)
             
-            // Navegación al Home
-            NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                EmptyView()
-            }
         }
         .padding(.horizontal, 24)
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToLogin) { LoginView() }
+        .navigationDestination(isPresented: $navigateToHome) { HomeView() }
     }
 }

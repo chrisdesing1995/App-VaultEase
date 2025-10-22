@@ -60,6 +60,8 @@ struct LoginView: View {
                             await vm.signIn(email: email, password: password)
                             if vm.user != nil {
                                 navigateToHome = true
+                            }else {
+                                navigateToHome = false
                             }
                         }
                     }) {
@@ -139,23 +141,18 @@ struct LoginView: View {
                 // MARK: - Footer
                 HStack(spacing: 4) {
                     Text("¿No tienes una cuenta?")
-                    NavigationLink(destination: RegisterView(), isActive: $navigateToRegister) {
-                        Button("Regístrate") {
-                            navigateToRegister = true
-                        }
-                        .foregroundColor(.blue)
+                    Button("Regístrate") {
+                        navigateToRegister = true
                     }
+                    .foregroundColor(.blue)
                 }
                 .font(.system(size: 15))
                 .padding(.bottom, 20)
-                
-                // MARK: - Navigation to Home
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                    EmptyView()
-                }
             }
             .padding(.horizontal, 24)
             .navigationBarHidden(true)
+            .navigationDestination(isPresented: $navigateToRegister) { RegisterView() }
+            .navigationDestination(isPresented: $navigateToHome) { HomeView() }
         }
     }
 }

@@ -10,7 +10,9 @@ import FirebaseAuth
 
 struct HomeView: View {
     @StateObject private var vm = AuthViewModel()
-
+    @State private var navigateToLogin = false
+   
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -20,6 +22,9 @@ struct HomeView: View {
                 
                 Button("Cerrar sesión") {
                     vm.signOut()
+                    if vm.user == nil {
+                        navigateToLogin = true
+                    }
                 }
                 .font(.system(size: 17, weight: .medium))
                 .foregroundColor(.red)
@@ -28,9 +33,11 @@ struct HomeView: View {
                 .cornerRadius(10)
                 
                 Spacer()
+                
             }
             .navigationTitle("Inicio")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(isPresented: $navigateToLogin) { LoginView() }
         }
     }
 }

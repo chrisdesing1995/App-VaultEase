@@ -13,6 +13,7 @@ struct CustomTextField: View {
     
     var body: some View {
         TextField(placeholder, text: $text)
+            .textContentType(.none)
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(10)

@@ -13,8 +13,10 @@ struct CustomSecureField: View {
     
     var body: some View {
         SecureField(placeholder, text: $text)
+            .textContentType(.none)
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(10)
+            .disableAutocorrection(true)
     }
 }
